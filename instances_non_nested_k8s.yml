@@ -1,0 +1,104 @@
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  CONTAINER_REGISTRY_USERNAME: JNPR-FieldUser50
+  CONTAINER_REGISTRY_PASSWORD: fHzTJy9vjdgX5a6shKr7
+  ENABLE_DESTROY: False
+provider_config:
+  bms:
+    ssh_user: root
+    ssh_pwd: training1!
+    ntpserver: 10.200.61.254
+    domainsuffix: local
+instances:
+  controller2:
+    ip: 10.200.61.6
+    provider: bms
+    roles:
+      config:
+      dhcp:
+      config_database:
+      control:
+      webui:
+      k8s_master:
+      kubemanager:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
+      vrouter:
+        TSN_EVPN_MODE: true
+        PHYSICAL_INTERFACE: ens192
+        VROUTER_GATEWAY: 10.61.3.33
+  appformix:
+    ip: 10.200.61.8
+    provider: bms
+    roles:
+      appformix_controller:
+      appformix_bare_host:
+  server4:
+    ip: 10.200.61.10
+    provider: bms
+    roles:
+      k8s_node:
+      vrouter:
+        PHYSICAL_INTERFACE: ens192
+        VROUTER_GATEWAY: 10.61.3.17
+      openstack_compute:
+      appformix_compute:
+  server5:
+    ip: 10.200.61.11
+    provider: bms
+    roles:
+      vrouter:
+        PHYSICAL_INTERFACE: ens224
+        VROUTER_GATEWAY: 10.61.3.49
+      k8s_node:
+      openstack_compute:
+      appformix_compute:
+  server6:
+    ip: 10.200.61.12
+    provider: bms
+    roles:
+      vrouter:
+        PHYSICAL_INTERFACE: ens192
+        VROUTER_GATEWAY: 10.61.3.65
+      k8s_node:
+      openstack_compute:
+      appformix_compute:
+  openstack:
+    ip: 10.200.61.14
+    provider: bms
+    roles:
+      openstack_control:
+      openstack_network:
+      openstack_storage:
+      openstack_monitoring:
+      appformix_openstack_controller:
+contrail_configuration:
+  CONTRAIL_VERSION: 1908.47
+  CLOUD_ORCHESTRATOR: openstack
+  RABBITMQ_NODE_PORT: 5673
+  ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
+  AUTH_MODE: keystone
+  UPGRADE_KERNEL: true
+  KEYSTONE_AUTH_HOST: 10.200.61.14
+  KEYSTONE_AUTH_URL_VERSION: /v3
+  CONTROLLER_NODES: 10.200.61.6
+  CONTROL_NODES: 10.61.3.34
+  TSN_NODES: 10.61.3.34
+  CONTRAIL_CONTAINER_TAG: 1908.47
+  OPENSTACK_VERSION: queens
+  USE_OPENSTACK_TFTP: True
+  CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: "2"
+  DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: "2"
+kolla_config:
+  kolla_globals:
+    enable_haproxy: "no"
+    enable_ironic: "no"
+    enable_swift: "yes"
+    enable_barbican: "no"
+  kolla_passwords:
+    keystone_admin_password: training1!
+appformix_configuration:
+  appformix_version:  3.0.1
+  appformix_license:  /opt/software/appformix/appformix-license-openstack.v3.sig
