@@ -1,0 +1,147 @@
+[root@contrail-command1 ~]# cat command_servers.yml
+---
+# User defined volumes
+#user_command_volumes:
+#  - /var/tmp/contrail:/var/tmp/contrail
+command_servers:
+    server1:
+        ip: 10.200.61.2
+        connection: ssh
+        ssh_user: root
+        ssh_pass: training1!
+        sudo_pass: <contrail command server root password>
+        ntpserver: 10.200.61.254
+        # Specify either container_path
+        #container_path: /root/contrail-command-051618.tar
+        # or registry details and container_name
+        registry_insecure: false
+        container_registry: hub.juniper.net/contrail
+        container_name: contrail-command
+        container_tag: "1908.47"
+        container_registry_username: JNPR-FieldUser12
+        container_registry_password: aqSKv9yVM6jfRFx75kcs
+        config_dir: /etc/contrail
+
+        # contrail command container configurations given here go to /etc/contrail/contrail.yml
+        contrail_config:
+            # Database configuration. PostgreSQL supported
+            database:
+                type: postgres
+                dialect: postgres
+                host: localhost
+                user: root
+                password: contrail123
+                name: contrail_test
+                # Max Open Connections for DB Server
+                max_open_conn: 100
+                connection_retries: 10
+                retry_period: 3s
+            keystone:
+               assignment:
+                   data:
+                     users:
+                       admin:
+                         password: contrail123
+            # Log Level
+            log_level: debug
+
+            # Cache configuration
+            cache:
+              enabled: true
+              timeout: 10s
+              max_history: 100000
+              rdbms:
+                enabled: true
+
+            # Server configuration
+            server:
+              enabled: true
+              read_timeout: 10
+              write_timeout: 5
+              log_api: true
+              address: ":9091"
+
+              # TLS Configuration
+#              tls:
+#                  enabled: true
+#                  key_file: /usr/share/contrail/ssl/cs-key.pem
+#                  cert_file: /usr/share/contrail/ssl/cs-cert.pem
+
+              # Enable GRPC or not
+              enable_grpc: false
+
+              # Static file config
+              # key: URL path
+              # value: file path. (absolute path recommended in production)
+              static_files:
+                  /: /usr/share/contrail/public
+
+              # API Proxy configuration
+              # key: URL path
+              # value: String list of backend host
+              #proxy:
+              #    /contrail:
+              #    - http://localhost:8082
+
+              notify_etcd: false
+
+              # VNC Replication
+              enable_vnc_replication: true
+
+
+            # disable authentication with no_auth true and comment out keystone configuraion.
+            #no_auth: true
+            insecure: true
+            auth_type: basic-auth
+            client:
+             password: contrail123
+            etcd:
+              endpoints:
+                - localhost:2379
+              username: ""
+              password: ""
+              path: contrail
+
+            watcher:
+              enabled: false
+              storage: json
+
+#            client:
+#              id: admin
+#              password: contrail123
+#              project_name: admin
+#              domain_id: default
+#              schema_root: /
+#              endpoint: https://localhost:9091
+
+            compilation:
+              enabled: false
+              # Global configuration
+              plugin_directory: 'etc/plugins/'
+              number_of_workers: 4
+              max_job_queue_len: 5
+              msg_queue_lock_time: 30
+              msg_index_string: 'MsgIndex'
+              read_lock_string: "MsgReadLock"
+              master_election: true
+
+              # Plugin configuration
+              plugin:
+                  handlers:
+                      create_handler: 'HandleCreate'
+                      update_handler: 'HandleUpdate'
+                      delete_handler: 'HandleDelete'
+
+            agent:
+              enabled: true
+              backend: file
+              watcher: polling
+              log_level: debug
+
+         # The following are optional parameters used to patch/cherrypick
+         # revisions into the contrail-ansible-deployer sandbox. These configs
+         # go into the /etc/contrail/contrail-deploy-config.tmpl file
+#        cluster_config:
+#            ansible_fetch_url: "https://review.opencontrail.org/Juniper/contrail-ansible-deployer refs/changes/80/40780/20"
+#            ansible_cherry_pick_revision: FETCH_HEAD
+#            ansible_revision: GIT_COMMIT_HASH
