@@ -1,0 +1,61 @@
+provider_config:
+  bms:
+    ssh_pwd: c0ntrail123
+    ssh_user: root
+    ntpserver: 10.200.61.254
+    domainsuffix: vcld.cert.sv.edu.juniper.net
+instances:
+  bms1:
+    provider: bms
+    ip: 10.200.61.1
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      webui:
+      vcenter_plugin:
+  bms2:
+    provider: bms
+    esxi_host: 10.200.61.3
+    ip: 10.200.61.22
+    roles:
+      vrouter:
+        PHYSICAL_INTERFACE: ens192
+        VROUTER_GATEWAY: 10.61.5.17
+      vcenter_manager:
+        ESXI_USERNAME: root
+        ESXI_PASSWORD: training1!
+  bms3:
+    provider: bms
+    esxi_host: 10.200.61.4
+    ip: 10.200.61.23
+    roles:
+      vrouter:
+        PHYSICAL_INTERFACE: ens192
+        VROUTER_GATEWAY: 10.61.5.33
+      vcenter_manager:
+        ESXI_USERNAME: root
+        ESXI_PASSWORD: training1!
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  CONTAINER_REGISTRY_USERNAME: JNPR-FieldUser12
+  CONTAINER_REGISTRY_PASSWORD: aqSKv9yVM6jfRFx75kcs
+  REGISTRY_PRIVATE_INSECURE: False
+contrail_configuration:
+  CLOUD_ORCHESTRATOR: vcenter
+  CONTRAIL_VERSION: 1908.47
+  RABBITMQ_NODE_PORT: 5673
+  CONTROLLER_NODES: 10.200.61.1
+  CONTROL_DATA_NET_LIST: 10.61.5.0/28,10.61.5.16/28,10.61.5.32/28
+  CONTROL_NODES: 10.61.5.2
+  VCENTER_SERVER: 10.200.61.5
+  VCENTER_USERNAME: administrator@vsphere.local
+  VCENTER_PASSWORD: lab123@Lab
+  VCENTER_DATACENTER: DC1
+  VCENTER_DVSWITCH: overlay
+  VCENTER_WSDL_PATH: /usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl
+  VCENTER_AUTH_PROTOCOL: https
+  CONFIG_NODEMGR__DEFAULTS__minimum_diskGB: 32
+  DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 32
