@@ -1,0 +1,140 @@
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  REGISTRY_PRIVATE_INSECURE: false
+  CONTAINER_REGISTRY_USERNAME: JNPR-FieldUser50
+  CONTAINER_REGISTRY_PASSWORD: fHzTJy9vjdgX5a6shKr7
+provider_config:
+  bms:
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    ntpserver: 10.200.61.254
+    domainsuffix: local
+instances:
+  controller2:
+    ip: 10.200.61.6
+    ssh_user: root
+    ssh_pwd: training1!
+    provider: bms
+    roles:
+      config:
+      config_database:
+      control:
+      webui:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
+      vrouter:
+        TSN_EVPN_MODE: true
+        VROUTER_GATEWAY: 10.61.3.33
+      dhcp:
+      appformix_bare_host:
+  server6:
+    ip: 10.200.61.12
+    ssh_user: root
+    ssh_pwd: training1!
+    provider: bms
+    roles:
+      vrouter:
+        VROUTER_GATEWAY: 10.61.3.65
+      openstack_compute:
+      appformix_compute:
+  server5:
+    ip: 10.200.61.11
+    ssh_user: root
+    ssh_pwd: training1!
+    provider: bms
+    roles:
+      vrouter:
+        VROUTER_GATEWAY: 10.61.3.49
+      openstack_compute:
+      appformix_compute:
+  server4:
+    ip: 10.200.61.10
+    ssh_user: root
+    ssh_pwd: training1!
+    provider: bms
+    roles:
+      vrouter:
+        VROUTER_GATEWAY: 10.61.3.17
+      openstack_compute:
+      appformix_compute:
+  openstack:
+    ip: 10.200.61.14
+    ssh_user: root
+    ssh_pwd: training1!
+    provider: bms
+    roles:
+      openstack_control:
+      openstack_network:
+      openstack_storage:
+      openstack_monitoring:
+      appformix_openstack_controller:
+  appformix:
+    ip: 10.200.61.8
+    ssh_user: root
+    ssh_pwd: training1!
+    provider: bms
+    roles:
+      appformix_controller:
+      appformix_bare_host:
+  server8:
+    ip: 10.200.61.18
+    provider: bms
+    ssh_user: root
+    ssh_pwd: training1!
+    roles:
+      k8s_master:
+      kubemanager:
+  server7:
+    ip: 10.200.61.17
+    provider: bms
+    ssh_user: root
+    ssh_pwd: training1!
+    roles:
+      k8s_node:
+      vrouter:
+        VROUTER_GATEWAY: 10.61.3.81
+  server9:
+    ip: 10.200.61.19
+    provider: bms
+    ssh_user: root
+    ssh_pwd: training1!
+    roles:
+      k8s_node:
+      vrouter:
+        VROUTER_GATEWAY: 10.61.3.113
+contrail_configuration:
+  CONTRAIL_VERSION: latest
+  CLOUD_ORCHESTRATOR: openstack
+  RABBITMQ_NODE_PORT: 5673
+  ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
+  AUTH_MODE: keystone
+  KEYSTONE_AUTH_HOST: 10.200.61.14
+  KEYSTONE_AUTH_URL_VERSION: /v3
+  ENABLE_DESTROY: no
+  ssh_user: root
+  ssh_pwd: training1!
+  TSN_NODES: 10.61.3.34
+  USE_OPENSTACK_TFTP: yes
+  KEYSTONE_AUTH_HOST: 10.200.61.14
+  CONTRAIL_CONTAINER_TAG: "1908.47"
+  AUTH_MODE: keystone
+  CONTROLLER_NODES: 10.200.61.6
+  RABBITMQ_NODE_PORT: 5673
+  CONTROL_NODES: 10.61.3.34
+  CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 2
+  DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 2
+  OPENSTACK_VERSION: queens
+  KEYSTONE_AUTH_URL_VERSION: /v3
+kolla_config:
+  kolla_globals:
+    enable_haproxy: no
+    enable_haproxy: no
+    enable_swift: yes
+    enable_barbican: no
+  kolla_passwords:
+    keystone_admin_password: contrail123
+    keystone_admin_password: contrail123
+appformix_configuration:
+    appformix_license:  /opt/software/appformix/appformix-license-openstack.v3.sig
