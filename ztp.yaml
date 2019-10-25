@@ -1,0 +1,92 @@
+supplemental_day_0_cfg:
+  - name: "cfg1"
+    cfg: |
+      set system ntp boot-server 10.200.61.254
+      set system ntp server 10.200.61.254
+      set system services ssh root-login allow
+      set system services netconf ssh
+      set system time-zone America/Los_Angeles
+      set system no-redirects
+      set system name-server 8.8.8.8
+  - name: "qfx6_cfg"
+    cfg: |
+      set system ntp boot-server 10.200.61.254
+      set system ntp server 10.200.61.254
+      set system services ssh root-login allow
+      set system services netconf ssh
+      set system time-zone America/Los_Angeles
+      set system no-redirects
+      set system name-server 8.8.8.8
+      set chassis fpc 0 pic 0 port 0 speed 1G
+      set chassis fpc 0 pic 0 port 4 speed 1G
+      set interfaces irb unit 129 family inet address 10.61.3.129/28
+      set forwarding-options storm-control-profiles default all
+      set interfaces ge-0/0/1 unit 0 family ethernet-switching vlan members cloud-connector
+      set vlans cloud-connector vlan-id 129
+      set vlans cloud-connector l3-interface irb.129
+  - name: "qfx7_cfg"
+    cfg: |
+      set system ntp boot-server 10.200.61.254
+      set system ntp server 10.200.61.254
+      set system services ssh root-login allow
+      set system services netconf ssh
+      set system time-zone America/Los_Angeles
+      set system no-redirects
+      set system name-server 8.8.8.8
+      set chassis fpc 0 pic 0 port 0 speed 1G
+      set chassis fpc 0 pic 0 port 4 speed 1G
+      set interfaces ge-0/0/2 enable
+      set interfaces ge-0/0/3 enable
+      set interfaces ge-0/0/2 unit 0 family inet address 10.61.3.17/28
+      set interfaces ge-0/0/3 unit 0 family inet address 10.61.3.81/28
+  - name: "qfx8_cfg"
+    cfg: |
+      set system ntp boot-server 10.200.61.254
+      set system ntp server 10.200.61.254
+      set system services ssh root-login allow
+      set system services netconf ssh
+      set system time-zone America/Los_Angeles
+      set system no-redirects
+      set system name-server 8.8.8.8
+      set chassis fpc 0 pic 0 port 0 speed 1G
+      set chassis fpc 0 pic 0 port 4 speed 1G
+      set interfaces ge-0/0/1 enable
+      set interfaces ge-0/0/2 enable
+      set interfaces ge-0/0/3 enable
+      set interfaces ge-0/0/1 unit 0 family inet address 10.61.3.33/28
+      set interfaces ge-0/0/2 unit 0 family inet address 10.61.3.49/28
+      set interfaces ge-0/0/3 unit 0 family inet address 10.61.3.97/28
+  - name: "qfx9_cfg"
+    cfg: |
+      set system ntp boot-server 10.200.61.254
+      set system ntp server 10.200.61.254
+      set system services ssh root-login allow
+      set system services netconf ssh
+      set system time-zone America/Los_Angeles
+      set system no-redirects
+      set system name-server 8.8.8.8
+      set chassis fpc 0 pic 0 port 0 speed 1G
+      set chassis fpc 0 pic 0 port 4 speed 1G
+      set interfaces ge-0/0/1 enable
+      set interfaces ge-0/0/2 enable
+      set interfaces ge-0/0/1 unit 0 family inet address 10.61.3.65/28
+      set interfaces ge-0/0/2 unit 0 family inet address 10.61.3.113/28
+device_to_ztp:
+  - serial_number: "XH3119130301"
+    supplemental_day_0_cfg: "qfx6_cfg"
+    hostname: 'LEAF1'
+  - serial_number: "XH3119130308"
+    supplemental_day_0_cfg: "qfx7_cfg"
+    hostname: 'LEAF2'
+  - serial_number: "XH3119130051"
+    supplemental_day_0_cfg: "qfx8_cfg"
+    hostname: 'LEAF3'
+  - serial_number: "XH3119130178"
+    supplemental_day_0_cfg: "qfx9_cfg"
+    hostname: 'LEAF4'
+  - serial_number: "EA686"
+    supplemental_day_0_cfg: "cfg1"
+    hostname: 'SPINE1'
+  - serial_number: "EB540"
+    supplemental_day_0_cfg: "cfg1"
+    hostname: 'SPINE2'
