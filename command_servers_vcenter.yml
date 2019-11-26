@@ -18,8 +18,8 @@ command_servers:
         container_registry: hub.juniper.net/contrail
         container_name: contrail-command
         container_tag: "1908.47"
-        container_registry_username: JNPR-FieldUser12
-        container_registry_password: aqSKv9yVM6jfRFx75kcs
+        container_registry_username: <username>
+        container_registry_password: <password>
         config_dir: /etc/contrail
 
         # contrail command container configurations given here go to /etc/contrail/contrail.yml
