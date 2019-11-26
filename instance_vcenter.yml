@@ -40,8 +40,8 @@ instances:
         ESXI_PASSWORD: training1!
 global_configuration:
   CONTAINER_REGISTRY: hub.juniper.net/contrail
-  CONTAINER_REGISTRY_USERNAME: JNPR-FieldUser12
-  CONTAINER_REGISTRY_PASSWORD: aqSKv9yVM6jfRFx75kcs
+  CONTAINER_REGISTRY_USERNAME: <username>
+  CONTAINER_REGISTRY_PASSWORD: <password>
   REGISTRY_PRIVATE_INSECURE: False
 contrail_configuration:
   CLOUD_ORCHESTRATOR: vcenter
