@@ -1,7 +1,7 @@
 global_configuration:
   CONTAINER_REGISTRY: hub.juniper.net/contrail-nightly
-  CONTAINER_REGISTRY_USERNAME: JNPR-FieldUser50
-  CONTAINER_REGISTRY_PASSWORD: fHzTJy9vjdgX5a6shKr7
+  CONTAINER_REGISTRY_USERNAME: <username>
+  CONTAINER_REGISTRY_PASSWORD: <password>
   ENABLE_DESTROY: False
 provider_config:
   bms:
