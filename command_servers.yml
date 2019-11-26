@@ -18,8 +18,8 @@ command_servers:
         container_name: contrail-command
         #container_tag: 5.0-214
         container_tag: 1908.47
-        container_registry_username: JNPR-FieldUser50
-        container_registry_password: fHzTJy9vjdgX5a6shKr7
+        container_registry_username: <username>
+        container_registry_password: <password>
         config_dir: /etc/contrail
 
         # contrail command container configurations given here go to /etc/contrail/contrail.yml
