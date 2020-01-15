@@ -1,0 +1,120 @@
+heat_template_version: 2015-04-30
+
+parameters:
+  bgpaas_vn_ipam:
+    type: string
+    description: Name of the BGPaaS VN IPAM
+  bgpaas_vn_ipam_prefix:
+    type: string
+    description: subnet prefix for the BGPaaS VN
+  bgpaas_vn_ipam_prefix_len:
+    type: string
+    description: subnet prefix len for the BGPaaS VN
+  bgpaas_vn:
+    type: string
+    description: Name of the BGPaaS VN
+  bgpaas_vn_fqdn:
+    type: string
+    description: FQ Name of the BGPaaS VN
+  image:
+    type: string
+    description: Name of the image for the BGPaaS VM
+  flavor:
+    type: string
+    description: Flavor to be used for the BGPaaS VM
+  bgpaas_name:
+     type: string
+     description: Name of the BGPaaS object
+  bgpaas_vm_name:
+     type: string
+     description: Name of the BGPaaS VM
+  bgpaas_asn:
+     type: string
+     description: ASN of the BGPaaS VM
+  bfd_hc_name:
+     type: string
+     description: Name of the BFD Health-Check
+
+resources:
+  template_bgpaas_vn_ipam:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: bgpaas_vn_ipam }
+
+  template_bgpaas_vn:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_bgpaas_vn_ipam ]
+    properties:
+      name: { get_param: bgpaas_vn }
+      network_ipam_refs: [{ get_resource: template_bgpaas_vn_ipam }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: bgpaas_vn_ipam_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: bgpaas_vn_ipam_prefix_len },
+                },
+            }]
+         }]
+
+  template_bgpaas_vmi:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name: { get_param: bgpaas_vm_name }
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_bgpaas_vn, fq_name ] } ] }]
+      service_health_check_refs: [{ list_join: [':', { get_attr: [ template_bfd_hc, fq_name ] } ] }]
+  
+  template_bgpaas_vm:
+    type: OS::Nova::Server
+    depends_on: [ template_bgpaas_iip ]
+    properties:
+      name: {get_param: bgpaas_vm_name }
+      image: { get_param:  image }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: template_bgpaas_vmi }
+  
+  template_bgpaas_iip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_bgpaas_vmi, template_bgpaas_vn ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_bgpaas_vmi }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_bgpaas_vn, fq_name ] } ] }]
+
+  template_bgpaas:
+    type: OS::ContrailV2::BgpAsAService
+    depends_on: [ template_bgpaas_vmi ]
+    properties:
+       name: { get_param: bgpaas_name }
+       virtual_machine_interface_refs: [{ get_resource: template_bgpaas_vmi}]
+       bgpaas_ip_address: { get_attr: [ template_bgpaas_iip, instance_ip_address ]}
+       autonomous_system: { get_param: bgpaas_asn }
+       bgpaas_session_attributes:
+        {
+           bgpaas_session_attributes_address_families:
+             {
+               bgpaas_session_attributes_address_families_family: ['inet'],
+             },
+           bgpaas_session_attributes_family_attributes:
+            [{
+              bgpaas_session_attributes_family_attributes_address_family: inet,
+            }],
+            bgpaas_session_attributes_as_override: 'true',
+            bgpaas_session_attributes_hold_time: '30',
+        }
+
+  template_bfd_hc:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: { get_param: bfd_hc_name }
+      service_health_check_properties:
+        {
+          service_health_check_properties_enabled: true,
+          service_health_check_properties_health_check_type: link-local,
+          service_health_check_properties_monitor_type: BFD,
+          service_health_check_properties_delay: 1,
+          service_health_check_properties_timeout: 1,
+          service_health_check_properties_max_retries: 3,
+        }
