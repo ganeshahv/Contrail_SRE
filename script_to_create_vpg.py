@@ -90,8 +90,7 @@ for my_vn_id in my_vn_ids:
     if tag_list[my_vn_ids.index(my_vn_id)][1] == 'untagged':
         obj_1.set_sub_interface_vlan_tag(0)
     else:
-        obj_1.set_sub_interface_vlan_tag(tag_list[my_vn_ids.index(my_vn_id)])
-    obj_1.set_sub_interface_vlan_tag(tag_list[my_vn_ids.index(my_vn_id)])
+        obj_1.set_sub_interface_vlan_tag(tag_list[my_vn_ids.index(my_vn_id)][0])
     my_vmi.set_virtual_machine_interface_properties(obj_1)
     vmi_id=vh.virtual_machine_interface_create(my_vmi)
     my_vmi_ids.append(vmi_id)
@@ -100,4 +99,4 @@ my_vpg = vh.virtual_port_group_read(id=my_vpg_id)
 for my_vmi_id in my_vmi_ids:
     my_vmi=vh.virtual_machine_interface_read(id=my_vmi_id)
     my_vpg.add_virtual_machine_interface(my_vmi)
-vh.virtual_port_group_update(my_vpg)
+vh.virtual_port_group_update(my_vpg)    
