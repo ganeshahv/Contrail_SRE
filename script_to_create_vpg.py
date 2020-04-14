@@ -13,12 +13,13 @@ my_ipam=vh.network_ipam_read(fq_name=[u'default-domain', u'default-project', u'd
 my_pi=vh.physical_interface_read(fq_name=[u'default-global-system-config', str(switch), str(phy_intf)])
 my_vn_ids=[]
 my_vmi_ids=[]
-tag_list = [1002]
+tag_list = [(1002, 'untagged')]
 print ("Creating %s VNs"%no_of_vns)
 for i in range(1, no_of_vns+1):
     print ("Creating VN number %s"%i)
     vn_name = 'vn_' + str(i)
     ip_prefix = '193.168.' + str(i) + '.0'
+    dns_ip = '193.168.' + str(i) + '.254'
     obj_0 = vnc_api.VirtualNetwork(name=vn_name,parent_obj=my_proj)
     obj_1 = vnc_api.VnSubnetsType()
     obj_2 = vnc_api.IpamSubnetType()
@@ -26,6 +27,9 @@ for i in range(1, no_of_vns+1):
     obj_3.set_ip_prefix(ip_prefix)
     obj_3.set_ip_prefix_len('24')
     obj_2.set_subnet(obj_3)
+    obj_2.set_enable_dhcp(False)
+    obj_2.set_addr_from_start(True)
+    obj_2.set_dns_server_address(str(dns_ip))
     obj_1.add_ipam_subnets(obj_2)
     obj_0.add_network_ipam(my_ipam, obj_1)
     vn_id = vh.virtual_network_create(obj_0)
@@ -74,9 +78,19 @@ for my_vn_id in my_vn_ids:
     kvp.set_value("vrouter")
     kvps.add_key_value_pair(kvp)
 
+    if tag_list[my_vn_ids.index(my_vn_id)][1] == 'untagged':
+        kvp = vnc_api.KeyValuePair()
+        kvp.set_key("tor_port_vlan_id")
+        kvp.set_value(str(tag_list[my_vn_ids.index(my_vn_id)][0]))
+        kvps.add_key_value_pair(kvp)
+    
     my_vmi.set_virtual_machine_interface_bindings(kvps)
     my_vmi.add_security_group(my_sg)
     obj_1 = vnc_api.VirtualMachineInterfacePropertiesType()
+    if tag_list[my_vn_ids.index(my_vn_id)][1] == 'untagged':
+        obj_1.set_sub_interface_vlan_tag(0)
+    else:
+        obj_1.set_sub_interface_vlan_tag(tag_list[my_vn_ids.index(my_vn_id)])
     obj_1.set_sub_interface_vlan_tag(tag_list[my_vn_ids.index(my_vn_id)])
     my_vmi.set_virtual_machine_interface_properties(obj_1)
     vmi_id=vh.virtual_machine_interface_create(my_vmi)
