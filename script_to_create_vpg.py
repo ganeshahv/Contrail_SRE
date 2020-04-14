@@ -54,7 +54,7 @@ for my_vn_id in my_vn_ids:
     kvps = vnc_api.KeyValuePairs()
     kvp = vnc_api.KeyValuePair()
     kvp.set_key("profile")
-        lli = {}
+    lli = {}
     lli = {"local_link_information":[{"port_id":'',"switch_id":'',"switch_info":'',"fabric":''}]}
     lli['local_link_information'][0]['port_id']=str(phy_intf)
     lli['local_link_information'][0]['switch_id']=str(phy_intf)
@@ -65,7 +65,7 @@ for my_vn_id in my_vn_ids:
     kvps.add_key_value_pair(kvp)
     kvp = vnc_api.KeyValuePair()
     kvp.set_key("vpg")
-    kvp.set_value("my-vpg")
+    kvp.set_value(str(my_vpg.name))
     kvps.add_key_value_pair(kvp)
 
     kvp = vnc_api.KeyValuePair()
@@ -99,4 +99,4 @@ my_vpg = vh.virtual_port_group_read(id=my_vpg_id)
 for my_vmi_id in my_vmi_ids:
     my_vmi=vh.virtual_machine_interface_read(id=my_vmi_id)
     my_vpg.add_virtual_machine_interface(my_vmi)
-vh.virtual_port_group_update(my_vpg)    
+vh.virtual_port_group_update(my_vpg)
