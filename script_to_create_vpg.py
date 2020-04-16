@@ -4,13 +4,17 @@ from vnc_api import vnc_api
 vh=VncApi(username=<username>,password=<password>,tenant_name='admin',api_server_host=<api_server_ip>,api_server_port='8082', auth_host=<auth_host>)
 no_of_vns = 1
 fabric_name=str('fabric1')
-switch=str('r2ru39-qfx5100-leaf-2')
-phy_intf=str('ge-0/0/2')
+pi_list=[('r2ru39-qfx5100-leaf-2', 'ge-0/0/2'), ('r2ru39-qfx5100-leaf-2', 'ge-0/0/3')]
 my_proj = vh.project_read(fq_name=[u'default-domain', u'admin'])
 my_fab=vh.fabric_read(fq_name=[u'default-global-system-config', fabric_name])
 my_sg=vh.security_group_read(fq_name=[u'default-domain', u'admin', u'default'])
 my_ipam=vh.network_ipam_read(fq_name=[u'default-domain', u'default-project', u'default-network-ipam'])
-my_pi=vh.physical_interface_read(fq_name=[u'default-global-system-config', str(switch), str(phy_intf)])
+my_pis=[]
+for pi in pi_list:
+    switch=str(pi[0])
+    phy_intf = str(pi[1])
+    my_pi=vh.physical_interface_read(fq_name=[u'default-global-system-config', str(switch), str(phy_intf)])
+    my_pis.append(my_pi)
 my_vn_ids=[]
 my_vmi_ids=[]
 tag_list = [(1002, 'untagged')]
@@ -39,7 +43,8 @@ print ("Creating a VPG")
 my_vpg=vnc_api.VirtualPortGroup(name='my-vpg',parent_obj=my_fab)
 my_vpg.set_virtual_port_group_type('access')
 obj_1 = vnc_api.VpgInterfaceParametersType()
-my_vpg.add_physical_interface(my_pi, obj_1)
+for my_pi in my_pis:
+    my_vpg.add_physical_interface(my_pi, obj_1)
 my_vpg_id = vh.virtual_port_group_create(my_vpg)
 
 if len(tag_list)!=len(my_vn_ids):
@@ -54,12 +59,17 @@ for my_vn_id in my_vn_ids:
     kvps = vnc_api.KeyValuePairs()
     kvp = vnc_api.KeyValuePair()
     kvp.set_key("profile")
-    lli = {}
-    lli = {"local_link_information":[{"port_id":'',"switch_id":'',"switch_info":'',"fabric":''}]}
-    lli['local_link_information'][0]['port_id']=str(phy_intf)
-    lli['local_link_information'][0]['switch_id']=str(phy_intf)
-    lli['local_link_information'][0]['switch_info']=str(switch)
-    lli['local_link_information'][0]['fabric']=str(fabric_name)
+    lli = {"local_link_information": ''}    
+    lli['local_link_information']=[]
+    for pi in pi_list:
+        switch=str(pi[0])
+        phy_intf = str(pi[1])
+        info_dict = {"port_id": '', "switch_id": '', "switch_info": '', "fabric": ''}
+        info_dict['port_id']=str(phy_intf)
+        info_dict['switch_id']=str(phy_intf)
+        info_dict['switch_info']=str(switch)
+        info_dict['fabric']=str(fabric_name)
+        lli['local_link_information'].append(info_dict)
     kvp.set_value(json.dumps(lli))
 
     kvps.add_key_value_pair(kvp)
