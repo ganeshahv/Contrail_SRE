@@ -36,6 +36,7 @@ for i in range(1, no_of_vns+1):
     obj_2.set_dns_server_address(str(dns_ip))
     obj_1.add_ipam_subnets(obj_2)
     obj_0.add_network_ipam(my_ipam, obj_1)
+    obj_0.set_virtual_network_category('routed')
     vn_id = vh.virtual_network_create(obj_0)
     my_vn_ids.append(vn_id)
 
