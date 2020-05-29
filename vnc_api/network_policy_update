@@ -1,0 +1,24 @@
+>>> my_proj=vh.project_read(id='98ce2416-ae64-4ef5-a718-ef19f416f7df')
+>>> rule = vnc_api.PolicyRuleType(
+...                 direction = '<>',
+...                 protocol = 'any',
+...                 action_list = vnc_api.ActionListType(simple_action = 'pass'),
+...                 src_addresses = [vnc_api.AddressType(virtual_network = 'default-domain:admin:vn1')],
+...                 src_ports = [vnc_api.PortType(start_port = -1, end_port = -1)],
+...                 dst_addresses = [vnc_api.AddressType(virtual_network = 'default-domain:admin:vn2')],
+...                 dst_ports = [vnc_api.PortType(start_port = -1, end_port = -1)])
+>>> my_pol=vnc_api.NetworkPolicy(name = 'my_pol', parent_obj = my_proj,network_policy_entries= vnc_api.PolicyEntriesType([rule]))
+>>> vh.network_policy_create(my_pol)
+>>> obj1=my_pol.network_policy_entries
+>>> obj2 = obj1.policy_rule
+>>> rule2 = vnc_api.PolicyRuleType(
+...                 direction = '<>',
+...                 protocol = 'udp',
+...                 action_list = vnc_api.ActionListType(simple_action = 'pass'),
+...                 src_addresses = [vnc_api.AddressType(virtual_network = 'default-domain:admin:vn2')],
+...                 src_ports = [vnc_api.PortType(start_port = -1, end_port = -1)],
+...                 dst_addresses = [vnc_api.AddressType(virtual_network = 'default-domain:admin:vn3')],
+...                 dst_ports = [vnc_api.PortType(start_port = -1, end_port = -1)])
+>>> obj1.add_policy_rule(rule2)
+>>> my_pol.set_network_policy_entries(obj1)
+>>> vh.network_policy_update(my_pol)
