@@ -1,0 +1,99 @@
+heat_template_version: 2015-04-30
+
+parameters:
+  ipam1_name:
+    type: string
+    description: Name of the IPAM
+  ipam1_uuid:
+    type: string
+    description: UUID of the IPAM subnet
+  ipam2_name:
+    type: string
+    description: Name of the IPAM
+  ipam2_uuid:
+    type: string
+    description: UUID of the IPAM subnet
+  ipam_type:
+    type: string
+    description: Type of the IPAM
+  vn1_name:
+    type: string
+    description: Name of the network
+  vn1_fwd_mode:
+    type: string
+    description: Forwarding Mode
+  subnet1_prefix:
+    type: string
+    description: prefix for subnet1
+  subnet2_prefix:
+    type: string
+    description: prefix for subnet2
+  subnet_prefix_len:
+    type: string
+    description: prefix length for subnets
+
+resources:
+  ipam1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam1_name }
+      ipam_subnet_method: { get_param: ipam_type }
+      ipam_subnets:
+        { ipam_subnets_subnets:
+            [{ ipam_subnets_subnets_subnet:
+                {
+                  ipam_subnets_subnets_subnet_ip_prefix: { get_param: subnet1_prefix },
+                  ipam_subnets_subnets_subnet_ip_prefix_len: { get_param: subnet_prefix_len },
+                },
+              ipam_subnets_subnets_subnet_uuid: { get_param: ipam1_uuid },
+           }]
+         }
+ ipam2:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam2_name }
+      ipam_subnet_method: { get_param: ipam_type }
+      ipam_subnets:
+        { ipam_subnets_subnets:
+            [{ ipam_subnets_subnets_subnet:
+                {
+                  ipam_subnets_subnets_subnet_ip_prefix: { get_param: subnet2_prefix },
+                  ipam_subnets_subnets_subnet_ip_prefix_len: { get_param: subnet_prefix_len },
+                },
+           ipam_subnets_subnets_subnet_uuid: { get_param: ipam2_uuid },
+            }]
+        }
+
+  vn1:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name: { get_param: vn1_name }
+      virtual_network_properties: {
+        virtual_network_properties_forwarding_mode: { get_param: vn1_fwd_mode }
+      }
+      network_ipam_refs: [{ get_resource: ipam1 }, { get_resource: ipam2 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            { get_attr: [ ipam1, ipam_subnets, subnet_uuid  ]}
+         },
+         {
+         network_ipam_refs_data_ipam_subnets:
+            { get_attr: [ ipam2, ipam_subnets, subnet_uuid ]}
+         }]
+
+  vmi1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ vn1, fq_name ] } ] }]
+  iip1:
+    type: OS::ContrailV2::InstanceIp
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: vmi1 }]
+      network_ipam_refs: [{ list_join: [':', { get_attr: [ ipam2, fq_name ] } ] }]
+      subnet_uuid: { get_param: ipam2_uuid }
+
+outputs:
+  iip1_ip:
+    description: Instance IP
+    value: { get_attr: [ iip1, instance_ip_address ] }
