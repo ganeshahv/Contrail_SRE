@@ -1,0 +1,53 @@
+from vnc_api.vnc_api import *
+vh=VncApi(username='admin',password=<password>,tenant_name='admin',api_server_host='172.25.151.17',api_server_port='8082')
+from vnc_api import vnc_api  
+
+my_proj=vh.project_read(id='98ce2416-ae64-4ef5-a718-ef19f416f7df')
+my_vn=vh.virtual_network_read(id='bbd454a6-832b-4ec6-bfe7-e675655e6ab1')
+my_sg=vh.security_group_read(id='c14e33c4-5eb3-4ddf-859e-c897804df5dc')
+
+vip_vmi=vnc_api.VirtualMachineInterface(parent_obj=my_proj)
+vip_vmi.set_virtual_network(my_vn)
+vip_vmi.add_security_group(my_sg)
+vip_vmi=vh.virtual_machine_interface_create(vip_vmi)
+
+vip_iip=vnc_api.InstanceIp(name='api-vip_iip')
+vip_iip.instance_ip_address= '1.1.1.100'
+vip_iip.set_virtual_network(my_vn)
+vip_iip.set_virtual_machine_interface(vip_vmi)
+vip_iip=vh.instance_ip_create(vip_iip)
+
+lb=vnc_api.Loadbalancer(name='api-lb1',parent_obj=my_proj,loadbalancer_provider='native')
+properties=vnc_api.LoadbalancerType(vip_subnet_id=my_vn.network_ipam_refs[0]['attr'].ipam_subnets[0].subnet_uuid,admin_state=True,operating_status='ONLINE',provisioning_status='ACTIVE',vip_address = '1.1.1.100')
+lb.set_loadbalancer_properties(properties)
+lb.set_virtual_machine_interface(vip_vmi)
+my_lb=vh.loadbalancer_create(lb)
+
+lis=vnc_api.LoadbalancerListener(name='api_lis', parent_obj= my_proj)
+lis_properties=vnc_api.LoadbalancerListenerType(protocol='HTTP',protocol_port='999',admin_state=True)
+lis.set_loadbalancer_listener_properties(lis_properties)
+lis.set_loadbalancer(lb)
+vh.loadbalancer_listener_create(lis)
+
+hm=vnc_api.LoadbalancerHealthmonitor(name='native-hm',parent_obj=my_proj)
+hm_prop=vnc_api.LoadbalancerHealthmonitorType(monitor_type='HTTP',delay='5',timeout='5',max_retries='3')
+hm.set_loadbalancer_healthmonitor_properties(hm_prop)
+vh.loadbalancer_healthmonitor_create(hm)
+
+pool=vnc_api.LoadbalancerPool(name='api-my_lb_pool',parent_obj=my_proj)
+pool_prop=vnc_api.LoadbalancerPoolType(protocol='HTTP',loadbalancer_method='ROUND_ROBIN')
+pool.set_loadbalancer_pool_provider('native')
+pool.set_loadbalancer_pool_properties(pool_prop)
+pool.set_loadbalancer_listener(lis)
+pool.set_loadbalancer_healthmonitor(hm)
+pool_create=vh.loadbalancer_pool_create(pool)
+
+member1=vnc_api.LoadbalancerMember(name='api-mem1',parent_obj=pool)
+member1_prop=vnc_api.LoadbalancerMemberType(admin_state=True,subnet_id=my_vn.network_ipam_refs[0]['attr'].ipam_subnets[0].subnet_uuid,protocol_port='80',address='1.1.1.3')
+member1.set_loadbalancer_member_properties(member1_prop)
+vh.loadbalancer_member_create(member1)
+	
+member2= vnc_api.LoadbalancerMember(name='api-mem2',parent_obj=pool)
+member2_prop=vnc_api.LoadbalancerMemberType(admin_state=True,subnet_id=my_vn.network_ipam_refs[0]['attr'].ipam_subnets[0].subnet_uuid,protocol_port='80',address='1.1.1.4')
+member2.set_loadbalancer_member_properties(member2_prop)
+vh.loadbalancer_member_create(member2)
