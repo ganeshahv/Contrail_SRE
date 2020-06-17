@@ -1,0 +1,162 @@
+## This template deploys one load-balancer (named my_lb) on port 80
+
+heat_template_version: 2016-04-08
+description: Simple template to deploy LBaaS v2
+parameters:
+
+resources:
+
+  lbaas_network_1:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name: lbaas_network_1
+
+  lbaas_subnet_1:
+    type: OS::Neutron::Subnet
+    properties:
+      name: lbaas_subnet_1
+      cidr: 192.168.101.0/24
+      network_id: { get_resource: lbaas_network_1 }
+
+  vip_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: lbaas_network_1 }
+
+  server_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: lbaas_network_1 }
+
+  server_2_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: lbaas_network_1 }
+
+  server_3_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: lbaas_network_1 }
+
+
+  server_1:
+    type: OS::Nova::Server
+    properties:
+      name: "app-front-srv-lbaas-1"
+      image: "ubuntu16"
+      flavor: "gp.nano"
+      networks:
+        - port: { get_resource: server_1_port }
+        
+      user_data_format: RAW
+      user_data:
+          str_replace:
+           params:
+            output: output
+           template: |
+             #!/bin/bash -v
+             echo "" >> /etc/resolv.conf
+             echo "nameserver 8.8.8.8 " > /etc/resolv.conf
+             apt-get install httpd -y
+             cd /var/www/html
+             echo "<h> This is backend1 </h>" > index.html
+             cd ~
+             service httpd restart
+
+  server_2:
+    type: OS::Nova::Server
+    properties:
+      name: "app-front-srv-lbaas-2"
+      image: "ubuntu16"
+      flavor: "gp.nano"
+      networks:
+        - port: { get_resource: server_2_port }
+        
+      user_data_format: RAW
+      user_data:
+          str_replace:
+           params:
+            output: output
+           template: |fHea
+             #!/bin/bash -v
+             echo "" >> /etc/resolv.conf
+             echo "nameserver 8.8.8.8 " > /etc/resolv.conf
+             apt-get install httpd -y
+             cd /var/www/html
+             echo "<h> This is backend2 </h>" > index.html
+             cd ~
+             service httpd restart
+
+  server_3:
+    type: OS::Nova::Server
+    properties:
+      name: "app-client-lbaas"
+      image: "ubuntu16"
+      flavor: "gp.nano"
+      networks:
+        - port: { get_resource: server_3_port }
+
+  my_lb:
+    type: OS::ContrailV2::Loadbalancer
+    properties:
+      name: my_lb
+      loadbalancer_provider: native
+      loadbalancer_properties:
+        {
+          loadbalancer_properties_vip_subnet_id: { get_resource: lbaas_subnet_1 },
+          loadbalancer_properties_vip_address: { get_attr: [vip_port_0, fixed_ips, 0, ip_address] },
+          loadbalancer_properties_provisioning_status: ACTIVE,
+          loadbalancer_properties_admin_state: TRUE,
+          loadbalancer_properties_operating_status: ONLINE,
+        }
+      virtual_machine_interface_refs: [{ get_resource: vip_port_0 }]
+
+  my_listener_1:
+    type: OS::ContrailV2::LoadbalancerListener
+    properties:
+      name: my_listener_1
+      loadbalancer_listener_properties:
+        {
+          loadbalancer_listener_properties_protocol: HTTP,
+          loadbalancer_listener_properties_protocol_port: 80,
+        }
+      loadbalancer_refs: [{ get_resource: my_lb }]
+
+  my_pool_1:
+    type: OS::ContrailV2::LoadbalancerPool
+    properties:
+      name: my_pool_1
+      loadbalancer_pool_provider: native
+      loadbalancer_pool_properties:
+        {
+          loadbalancer_pool_properties_protocol: HTTP,
+          loadbalancer_pool_properties_loadbalancer_method: ROUND_ROBIN,
+          loadbalancer_pool_properties_admin_state: TRUE,
+        }
+      loadbalancer_listener_refs: [{ get_resource: my_listener_1 }]
+
+  pool_member_1:
+    type: OS::ContrailV2::LoadbalancerMember
+    properties:
+      name: member_1
+      loadbalancer_member_properties:
+        {
+          loadbalancer_member_properties_protocol_port: 80,
+          loadbalancer_member_properties_address: {get_attr: [server_1, networks, lbaas_network_1, 0]},
+          loadbalancer_member_properties_admin_state: TRUE,
+          loadbalancer_member_properties_subnet_id: { get_resource: lbaas_subnet_1 }
+        }
+      loadbalancer_pool: { get_resource: my_pool_1 }
+
+  pool_member_2:
+    type: OS::ContrailV2::LoadbalancerMember
+    properties:
+      name: member_2
+      loadbalancer_member_properties:
+        {
+          loadbalancer_member_properties_protocol_port: 80,
+          loadbalancer_member_properties_address: {get_attr: [server_2, networks, lbaas_network_1, 0]},
+          loadbalancer_member_properties_admin_state: TRUE,
+          loadbalancer_member_properties_subnet_id: { get_resource: lbaas_subnet_1 }
+        }
+      loadbalancer_pool: { get_resource: my_pool_1 }
