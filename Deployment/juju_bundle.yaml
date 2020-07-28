@@ -1,0 +1,752 @@
+series: bionic
+applications:
+  contrail-agent:
+    charm: local:bionic/contrail-agent-0
+    options:
+      docker-password: jPrEwQaRymfuJt3Ad6S5
+      docker-registry: hub.juniper.net/contrail
+      docker-user: JNPR-Customer139
+      image-tag: 2005.1.66
+      log-level: SYS_INFO
+      physical-interface: bond0.402
+      vhost-gateway: 172.168.2.1
+    bindings:
+      "": alpha
+      agent-cluster: alpha
+      contrail-controller: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      tls-certificates: alpha
+      vrouter-plugin: alpha
+  contrail-analytics:
+    charm: local:bionic/contrail-analytics-0
+    num_units: 4
+    to:
+    - kvm:2
+    - kvm:3
+    - kvm:8
+    - kvm:9
+    options:
+      control-network: 172.168.1.0/24
+      docker-password: jPrEwQaRymfuJt3Ad6S5
+      docker-registry: hub.juniper.net/contrail
+      docker-user: JNPR-Customer139
+      haproxy-http-mode: https
+      image-tag: 2005.1.66
+      log-level: SYS_DEBUG
+      vip: 10.85.51.110
+    constraints: cpu-cores=16 mem=32768 root-disk=102400 spaces=oam-space,overlay-space,internal-space
+    bindings:
+      "": oam-space
+      analytics-cluster: internal-space
+      contrail-analytics: internal-space
+      contrail-analyticsdb: internal-space
+      http-services: oam-space
+      nrpe-external-master: oam-space
+      tls-certificates: oam-space
+  contrail-analyticsdb:
+    charm: local:bionic/contrail-analyticsdb-0
+    num_units: 4
+    to:
+    - kvm:2
+        - kvm:3
+    - kvm:8
+    - kvm:9
+    options:
+      cassandra-jvm-extra-opts: -Xms16g -Xmx24g
+      cassandra-minimum-diskgb: "4"
+      control-network: 172.168.1.0/24
+      docker-password: jPrEwQaRymfuJt3Ad6S5
+      docker-registry: hub.juniper.net/contrail
+      docker-user: JNPR-Customer139
+      image-tag: 2005.1.66
+      log-level: SYS_DEBUG
+    constraints: cpu-cores=16 mem=65536 root-disk=512000 spaces=oam-space,overlay-space,internal-space
+    bindings:
+      "": oam-space
+      analyticsdb-cluster: internal-space
+      contrail-analyticsdb: internal-space
+      nrpe-external-master: oam-space
+      tls-certificates: oam-space
+  contrail-controller:
+    charm: local:bionic/contrail-controller-0
+    num_units: 4
+    to:
+    - kvm:2
+    - kvm:3
+    - kvm:8
+    - kvm:9
+    options:
+      auth-mode: rbac
+      cassandra-jvm-extra-opts: -Xms16g -Xmx24g
+      cassandra-minimum-diskgb: "4"
+      control-network: 172.168.1.0/24
+      data-network: 172.168.2.0/24
+      docker-password: jPrEwQaRymfuJt3Ad6S5
+      docker-registry: hub.juniper.net/contrail
+      docker-user: JNPR-Customer139
+      haproxy-http-mode: https
+      haproxy-https-mode: http
+      image-tag: 2005.1.66
+      local-rabbitmq-hostname-resolution: true
+      log-level: SYS_DEBUG
+      vip: 10.85.51.110
+    constraints: cpu-cores=16 mem=32768 root-disk=102400 spaces=oam-space,overlay-space,internal-space
+    bindings:
+      "": oam-space
+      contrail-analytics: internal-space
+      contrail-analyticsdb: internal-space
+      contrail-auth: oam-space
+      contrail-controller: oam-space
+      contrail-issu: oam-space
+      controller-cluster: oam-space
+            http-services: oam-space
+      https-services: oam-space
+      nrpe-external-master: oam-space
+      tls-certificates: oam-space
+  contrail-haproxy:
+    charm: cs:haproxy-55
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      default_timeouts: queue 60000, connect 5000, client 120000, server 120000
+      enable_monitoring: true
+      peering_mode: active-active
+      services: ""
+      source: backports
+      ssl_cert: SELFSIGNED
+    bindings:
+      "": oam-space
+      local-monitors: oam-space
+      munin: oam-space
+      nrpe-external-master: oam-space
+      peer: oam-space
+      public: oam-space
+      reverseproxy: internal-space
+      statistics: oam-space
+      website: oam-space
+  contrail-keepalived:
+    charm: cs:~containers/keepalived-28
+    options:
+      network_interface: eth0
+      port: 8143
+      virtual_ip: 10.85.51.110
+    bindings:
+      "": alpha
+      juju-info: alpha
+      lb-sink: alpha
+      loadbalancer: alpha
+      website: alpha
+  contrail-keystone-auth:
+    charm: local:bionic/contrail-keystone-auth-0
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    constraints: spaces=oam-space,overlay-space
+    bindings:
+          "": oam-space
+      contrail-auth: oam-space
+      identity-admin: oam-space
+      nrpe-external-master: oam-space
+  contrail-openstack:
+    charm: local:bionic/contrail-openstack-0
+    options:
+      docker-password: jPrEwQaRymfuJt3Ad6S5
+      docker-registry: hub.juniper.net/contrail
+      docker-user: JNPR-Customer139
+      image-tag: 2005.1.66
+      use-internal-endpoints: true
+    bindings:
+      "": alpha
+      cluster: alpha
+      contrail-controller: alpha
+      heat-plugin: alpha
+      juju-info: alpha
+      neutron-api: alpha
+      nova-compute: alpha
+  dashboard-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  external-policy-routing:
+    charm: cs:~canonical-bootstack/policy-routing-3
+    options:
+      cidr: 10.85.51.0/24
+      gateway: 10.85.51.1
+    bindings:
+      "": alpha
+      juju-info: alpha
+  glance:
+    charm: cs:glance-290
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      openstack-origin: cloud:bionic-train
+      region: RegionOne
+            restrict-ceph-pools: false
+      use-internal-endpoints: true
+      vip: 10.85.51.103 172.168.1.13
+      worker-multiplier: 0.25
+    bindings:
+      "": oam-space
+      admin: oam-space
+      amqp: oam-space
+      ceph: oam-space
+      certificates: oam-space
+      cinder-volume-service: oam-space
+      cluster: oam-space
+      ha: oam-space
+      identity-service: oam-space
+      image-service: oam-space
+      internal: internal-space
+      nrpe-external-master: oam-space
+      object-store: oam-space
+      public: oam-space
+      shared-db: internal-space
+      storage-backend: oam-space
+  glance-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  heat:
+    charm: cs:heat-271
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - kvm:9
+    options:
+      openstack-origin: cloud:bionic-train
+      region: RegionOne
+      use-internal-endpoints: true
+      vip: 10.85.51.105 172.168.1.15
+      worker-multiplier: 0.25
+    constraints: cpu-cores=6 mem=32768 root-disk=65536 spaces=oam-space,internal-space,overlay-space
+    bindings:
+      "": oam-space
+      admin: oam-space
+            amqp: oam-space
+      certificates: oam-space
+      cluster: oam-space
+      ha: oam-space
+      heat-plugin-subordinate: overlay-space
+      identity-service: oam-space
+      internal: internal-space
+      public: oam-space
+      shared-db: internal-space
+  heat-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  keystone:
+    charm: cs:keystone-309
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      admin-password: c0ntrail123
+      admin-role: admin
+      openstack-origin: cloud:bionic-train
+      preferred-api-version: 3
+      region: RegionOne
+      token-provider: fernet
+      vip: 10.85.51.106 172.168.1.16
+      worker-multiplier: 0.25
+    bindings:
+      "": oam-space
+      admin: oam-space
+      certificates: oam-space
+      cluster: oam-space
+      domain-backend: oam-space
+      ha: oam-space
+      identity-admin: oam-space
+      identity-credentials: oam-space
+      identity-notifications: oam-space
+      identity-service: oam-space
+      internal: internal-space
+      keystone-fid-service-provider: oam-space
+            keystone-middleware: oam-space
+      nrpe-external-master: oam-space
+      public: oam-space
+      shared-db: internal-space
+      websso-trusted-dashboard: oam-space
+  keystone-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  memcached:
+    charm: cs:memcached-26
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      allow-ufw-ip6-softfail: true
+    constraints: spaces=oam-space
+    bindings:
+      "": internal-space
+      cache: internal-space
+      cluster: internal-space
+      local-monitors: internal-space
+      monitors: internal-space
+      munin: internal-space
+      nrpe-external-master: internal-space
+  mysql:
+    charm: cs:percona-cluster-290
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      enable-binlogs: true
+      innodb-buffer-pool-size: 512M
+      max-connections: 2000
+      min-cluster-size: 3
+      performance-schema: true
+      source: cloud:bionic-train
+            tuning-level: safest
+      vip: 172.168.1.17
+      wait-timeout: 3600
+      wsrep-slave-threads: 48
+    bindings:
+      "": oam-space
+      access: oam-space
+      cluster: internal-space
+      db: internal-space
+      db-admin: internal-space
+      ha: internal-space
+      master: oam-space
+      nrpe-external-master: oam-space
+      shared-db: internal-space
+      slave: oam-space
+  mysql-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ncc-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  neutron-api:
+    charm: cs:neutron-api-281
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - kvm:9
+    options:
+      default-tenant-network-type: vlan
+      dhcp-agents-per-network: 2
+      enable-l3ha: true
+           enable-ml2-port-security: true
+      global-physnet-mtu: 9000
+      l2-population: true
+      manage-neutron-plugin-legacy-mode: false
+      neutron-security-groups: true
+      openstack-origin: cloud:bionic-train
+      overlay-network-type: ""
+      region: RegionOne
+      use-internal-endpoints: true
+      vip: 10.85.51.107 172.168.1.18
+      worker-multiplier: 0.25
+    constraints: cpu-cores=8 mem=32768 root-disk=262144 spaces=oam-space,internal-space,overlay-space
+    bindings:
+      "": oam-space
+      admin: oam-space
+      amqp: oam-space
+      certificates: oam-space
+      cluster: oam-space
+      etcd-proxy: oam-space
+      external-dns: oam-space
+      ha: oam-space
+      identity-service: oam-space
+      infoblox-neutron: oam-space
+      internal: internal-space
+      midonet: oam-space
+      neutron-api: oam-space
+      neutron-load-balancer: oam-space
+      neutron-plugin-api: oam-space
+      neutron-plugin-api-subordinate: overlay-space
+      nrpe-external-master: oam-space
+      public: oam-space
+      shared-db: internal-space
+      vsd-rest-api: oam-space
+  neutron-hacluster:
+    charm: cs:hacluster-62
+    options:
+      cluster_count: 3
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  nova-cloud-controller:
+    charm: cs:nova-cloud-controller-339
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+        - lxd:8
+    - lxd:9
+    options:
+      console-access-protocol: novnc
+      console-proxy-ip: local
+      cpu-allocation-ratio: 4
+      network-manager: Neutron
+      openstack-origin: cloud:bionic-train
+      ram-allocation-ratio: 0.999999
+      region: RegionOne
+      use-internal-endpoints: true
+      vip: 10.85.51.108 172.168.1.19
+      worker-multiplier: 0.25
+    bindings:
+      "": oam-space
+      admin: oam-space
+      amqp: oam-space
+      amqp-cell: oam-space
+      certificates: oam-space
+      cinder-volume-service: oam-space
+      cloud-compute: oam-space
+      cloud-controller: oam-space
+      cluster: oam-space
+      ha: oam-space
+      identity-service: oam-space
+      image-service: oam-space
+      internal: internal-space
+      memcache: internal-space
+      neutron-api: oam-space
+      nova-cell-api: oam-space
+      nova-vmware: oam-space
+      nrpe-external-master: oam-space
+      placement: oam-space
+      public: oam-space
+      quantum-network-service: oam-space
+      shared-db: internal-space
+      shared-db-cell: oam-space
+  nova-compute:
+    charm: cs:nova-compute-318
+    num_units: 1
+    to:
+    - "4"
+    options:
+      aa-profile-mode: enforce
+      enable-live-migration: true
+      enable-resize: true
+      libvirt-image-backend: qcow2
+      migration-auth-type: ssh
+      openstack-origin: cloud:bionic-train
+      reserved-host-memory: 16384
+      restrict-ceph-pools: false
+            use-internal-endpoints: true
+      virt-type: kvm
+      worker-multiplier: 0.25
+    bindings:
+      "": oam-space
+      amqp: oam-space
+      ceph: oam-space
+      ceph-access: oam-space
+      cloud-compute: oam-space
+      cloud-credentials: oam-space
+      compute-peer: oam-space
+      ephemeral-backend: oam-space
+      image-service: oam-space
+      internal: internal-space
+      lxd: oam-space
+      migration: oam-space
+      neutron-plugin: oam-space
+      nova-ceilometer: oam-space
+      nrpe-external-master: oam-space
+      secrets-storage: internal-space
+  ntp:
+    charm: cs:ntp-40
+    options:
+      source: 10.85.130.130
+    bindings:
+      "": alpha
+      juju-info: alpha
+      master: alpha
+      nrpe-external-master: alpha
+      ntp-peers: alpha
+      ntpmaster: alpha
+  openstack-dashboard:
+    charm: cs:openstack-dashboard-295
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      cinder-backup: false
+      endpoint-type: publicURL
+      neutron-network-firewall: false
+      neutron-network-l3ha: true
+      neutron-network-lb: true
+      openstack-origin: cloud:bionic-train
+      password-retrieve: true
+      secret: encryptcookieswithme
+      vip: 10.85.51.102
+      webroot: /
+    constraints: spaces=oam-space
+        bindings:
+      "": oam-space
+      certificates: oam-space
+      cluster: oam-space
+      dashboard-plugin: oam-space
+      ha: oam-space
+      identity-service: oam-space
+      nrpe-external-master: oam-space
+      public: oam-space
+      shared-db: internal-space
+      website: oam-space
+      websso-fid-service-provider: oam-space
+      websso-trusted-dashboard: oam-space
+  placement:
+    charm: cs:placement-11
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - kvm:9
+    options:
+      openstack-origin: cloud:bionic-train
+      worker-multiplier: 0.25
+    bindings:
+      "": oam-space
+      admin: oam-space
+      amqp: oam-space
+      certificates: oam-space
+      cluster: oam-space
+      ha: oam-space
+      identity-service: oam-space
+      internal: internal-space
+      placement: oam-space
+      public: oam-space
+      shared-db: internal-space
+  rabbitmq-server:
+    charm: cs:rabbitmq-server-97
+    num_units: 4
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:8
+    - lxd:9
+    options:
+      min-cluster-size: 3
+      source: cloud:bionic-train
+    bindings:
+      "": oam-space
+      amqp: internal-space
+      ceph: oam-space
+            certificates: oam-space
+      cluster: internal-space
+      ha: oam-space
+      nrpe-external-master: oam-space
+  ubuntu:
+    charm: cs:ubuntu-15
+    num_units: 4
+    to:
+    - "2"
+    - "3"
+    - ""
+    - "9"
+    bindings:
+      "": alpha
+machines:
+  "2":
+    constraints: tags=controller
+  "3":
+    constraints: tags=controller
+  "4":
+    constraints: tags=compute
+  "8": {}
+  "9": {}
+relations:
+- - ubuntu:juju-info
+  - ntp:juju-info
+- - mysql:ha
+  - mysql-hacluster:ha
+- - keystone:shared-db
+  - mysql:shared-db
+- - keystone:ha
+  - keystone-hacluster:ha
+- - glance:shared-db
+  - mysql:shared-db
+- - glance:identity-service
+  - keystone:identity-service
+- - glance:ha
+  - glance-hacluster:ha
+- - nova-cloud-controller:shared-db
+  - mysql:shared-db
+- - nova-cloud-controller:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:identity-service
+  - keystone:identity-service
+- - nova-cloud-controller:image-service
+  - glance:image-service
+- - nova-cloud-controller:ha
+  - ncc-hacluster:ha
+- - neutron-api:shared-db
+  - mysql:shared-db
+- - neutron-api:amqp
+  - rabbitmq-server:amqp
+- - neutron-api:neutron-api
+  - nova-cloud-controller:neutron-api
+- - neutron-api:identity-service
+  - keystone:identity-service
+- - neutron-api:ha
+  - neutron-hacluster:ha
+- - nova-compute:amqp
+  - rabbitmq-server:amqp
+- - nova-compute:image-service
+  - glance:image-service
+- - nova-compute:cloud-compute
+  - nova-cloud-controller:cloud-compute
+- - nova-compute:juju-info
+  - ntp:juju-info
+- - openstack-dashboard:identity-service
+  - keystone:identity-service
+- - openstack-dashboard:ha
+  - dashboard-hacluster:ha
+- - heat:shared-db
+  - mysql:shared-db
+- - heat:amqp
+  - rabbitmq-server:amqp
+- - heat:identity-service
+  - keystone:identity-service
+- - heat:ha
+  - heat-hacluster:ha
+- - placement:shared-db
+  - mysql:shared-db
+- - placement:identity-service
+  - keystone:identity-service
+- - placement:placement
+  - nova-cloud-controller:placement
+- - contrail-agent:contrail-controller
+  - contrail-controller:contrail-controller
+- - contrail-agent:juju-info
+  - nova-compute:juju-info
+- - contrail-analytics:contrail-analyticsdb
+  - contrail-analyticsdb:contrail-analyticsdb
+- - contrail-analytics:contrail-analytics
+  - contrail-controller:contrail-analytics
+- - contrail-analytics:http-services
+  - contrail-haproxy:reverseproxy
+- - contrail-analyticsdb:contrail-analyticsdb
+  - contrail-controller:contrail-analyticsdb
+- - contrail-controller:contrail-auth
+  - contrail-keystone-auth:contrail-auth
+- - contrail-controller:http-services
+  - contrail-haproxy:reverseproxy
+- - contrail-controller:https-services
+  - contrail-haproxy:reverseproxy
+  - - contrail-keystone-auth:identity-admin
+  - keystone:identity-admin
+- - contrail-openstack:nova-compute
+  - nova-compute:neutron-plugin
+- - contrail-openstack:neutron-api
+  - neutron-api:neutron-plugin-api-subordinate
+- - contrail-openstack:heat-plugin
+  - heat:heat-plugin-subordinate
+- - contrail-openstack:contrail-controller
+  - contrail-controller:contrail-controller
+- - contrail-haproxy:juju-info
+  - contrail-keepalived:juju-info
+- - nova-cloud-controller:memcache
+  - memcached:cache
+- - external-policy-routing:juju-info
+  - openstack-dashboard:juju-info
+- - external-policy-routing:juju-info
+  - glance:juju-info
+- - external-policy-routing:juju-info
+  - heat:juju-info
+- - external-policy-routing:juju-info
+  - keystone:juju-info
+- - external-policy-routing:juju-info
+  - neutron-api:juju-info
+- - external-policy-routing:juju-info
+  - nova-cloud-controller:juju-info
+- - external-policy-routing:juju-info
+  - contrail-haproxy:juju-info
+- - ntp:juju-info
+  - contrail-controller:juju-info
+- - ntp:juju-info
+  - contrail-analytics:juju-info
+- - ntp:juju-info
+  - contrail-analyticsdb:juju-info
+- - ntp:juju-info
+  - neutron-api:juju-info
+- - ntp:juju-info
+  - heat:juju-info
