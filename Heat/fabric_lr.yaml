@@ -1,0 +1,64 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create a LogicalRouter and extend it to Fabric:
+
+parameters:
+  project:
+    type: string
+    description: Name of the Project
+  lr_name:
+    type: string
+    description: Name of the LR
+  lr_type:
+    type: string
+    description: Type of the LR
+  external_gw:
+    type: string
+    description: Is the LR an external GW
+  fabric_name:
+    type: string
+    description: Name of the Fabric
+  physical_router:
+    type: string
+    description: Name of the Physical router
+  vn_1:
+    type: string
+    description: Virtual Network 1
+  vn_2:
+    type: string
+    description: Virtual Network 2
+  vmi_type:
+    type: string
+    description: Type of the VMI
+resources:
+  vmi1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_device_owner: { get_param: vmi_type }
+      virtual_network_refs: [{ get_param: vn_1 }]
+  iip1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vmi1 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: vmi1 }]
+      virtual_network_refs: [{ get_param: vn_1 }]
+  vmi2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_device_owner: { get_param: vmi_type }
+      virtual_network_refs: [{ get_param: vn_2 }]
+  iip2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vmi2 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: vmi2 }]
+      virtual_network_refs: [{ get_param: vn_2 }]
+  lr1:
+    type: OS::ContrailV2::LogicalRouter
+    properties:
+      name: { get_param: lr_name }
+      fabric_refs: [{ get_param: fabric_name }]
+      virtual_machine_interface_refs: [{ get_resource: vmi1 }, { get_resource: vmi2 }]
+      physical_router_refs: [{ get_param: physical_router }]
+      logical_router_type: { get_param: lr_type }
