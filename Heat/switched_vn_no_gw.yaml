@@ -1,0 +1,67 @@
+heat_template_version: 2015-04-30
+
+parameters:
+  ipam1_name:
+    type: string
+    description: Name of the IPAM
+  vn1_name:
+    type: string
+    description: Name of the network
+  subnet1_prefix:
+    type: string
+    description: prefix for subnet1
+  subnet_prefix_len:
+    type: string
+    description: prefix length for subnets
+      addr_from_start_true:
+    type: string
+    description: Subnet address start flag
+  def_gw:
+    type: string
+    description: Default Gateway Address
+  dns_ip:
+    type: string
+    description: DNS IP
+
+resources:
+  ipam1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam1_name }
+
+  vn1:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name: { get_param: vn1_name }
+      network_ipam_refs: [{ get_resource: ipam1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: subnet1_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: subnet_prefix_len },
+                },
+          network_ipam_refs_data_ipam_subnets_addr_from_start: { get_param: addr_from_start_true },
+          network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: def_gw },
+          network_ipam_refs_data_ipam_subnets_dns_server_address: { get_param: dns_ip },
+            }],
+            }]
+
+  vmi1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ vn1, fq_name ] } ] }]
+  iip1:
+    type: OS::ContrailV2::InstanceIp
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: vmi1 }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ vn1, fq_name ] } ] }]
+      network_ipam_refs: [{ list_join: [':', { get_attr: [ ipam1, fq_name ] } ] }]
+
+outputs:
+  iip1_ip:
+    description: Instance IP
+    value: { get_attr: [ iip1, instance_ip_address ] }
+    
