@@ -2,6 +2,7 @@ supplemental_day_0_cfg:
   - name: "cfg1"
     cfg: |
       set system ntp boot-server 10.200.61.254
+      set interfaces et-x/x/x unit 0 # This is required in case of et interfaces for LLDP to work. 
       set system ntp server 10.200.61.254
       set system services ssh root-login allow
       set system services netconf ssh
