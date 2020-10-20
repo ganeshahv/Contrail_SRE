@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntuapp2
+  namespace: gani-ns-isolated
+spec:
+  containers:
+      - image: ubuntu-upstart
+        name: ubuntu
