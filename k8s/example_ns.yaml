@@ -3,4 +3,5 @@ kind: Namespace
 metadata:
   annotations:
     "opencontrail.org/isolation" : "true"
+    "opencontrail.org/fip-pool" : "{'domain': 'default-domain', 'project': 'k8s-gani-ns-isolated', 'network': 'fip-vn-gani-ns-isolated-pod-network', 'name': 'floating-pool-gani-ns-isolated'}"
   name: gani-ns-isolated
