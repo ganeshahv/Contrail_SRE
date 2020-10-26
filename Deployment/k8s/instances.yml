@@ -1,0 +1,91 @@
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail-nightly
+  REGISTRY_PRIVATE_INSECURE: false
+  CONTAINER_REGISTRY_USERNAME: <username>
+  CONTAINER_REGISTRY_PASSWORD: <password>
+provider_config:
+  bms:
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    ntpserver: 66.129.233.81
+    domainsuffix: local
+instances:
+  r2ru3:
+    ip: 172.25.151.14
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      config:
+      config_database:
+      control:
+      webui:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
+      kubemanager:
+  r2ru4:
+    ip: 172.25.151.12
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      config:
+      config_database:
+      control:
+      webui:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
+      kubemanager:
+  r2ru5:
+    ip: 172.25.151.11
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      config:
+      config_database:
+      control:
+      webui:
+      analytics:
+      analytics_database:
+      analytics_alarm:
+      analytics_snmp:
+      k8s_master:
+      kubemanager:
+  r2ru2:
+    ip: 172.25.151.15
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      vrouter:
+        VROUTER_GATEWAY: 100.100.100.100
+      k8s_node:
+  r2ru1:
+    ip: 172.25.151.16
+    ssh_user: root
+    ssh_pwd: c0ntrail123
+    provider: bms
+    roles:
+      vrouter:
+        VROUTER_GATEWAY: 100.100.100.100
+      k8s_node:
+contrail_configuration:
+  CONTRAIL_VERSION: "2008.121"
+  CLOUD_ORCHESTRATOR: kubernetes
+  RABBITMQ_NODE_PORT: 5673
+  VROUTER_GATEWAY: 100.100.100.100
+  ENCAP_PRIORITY: VXLAN,MPLSoGRE,MPLSoUDP
+  CONTRAIL_VERSION: 2008.121
+  CLOUD_ORCHESTRATOR: kubernetes
+  RABBITMQ_NODE_PORT: 5673
+  KUBERNETES_PUBLIC_FIP_POOL: {'project': 'k8s-default', 'domain': 'default-domain', 'name': '__fip_pool_public__', 'network': '__public__'}
+  KUBERNETES_IP_FABRIC_SUBNETS: 172.25.151.0/24
+  CONTROLLER_NODES: 172.25.151.11,172.25.151.12,172.25.151.14
+  CONTROL_NODES: 100.100.100.105,100.100.100.104,100.100.100.103
+  KUBERNETES_API_NODES: 100.100.100.105
+  KUBERNETES_API_SERVER: 100.100.100.105
