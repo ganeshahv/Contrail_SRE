@@ -10,4 +10,5 @@ spec:
       - image: ubuntu-upstart
         name: ubuntu-with-nodeselector
   nodeSelector:
-    role: worker1   ### Used to select the worker node to launch the Pod
+    role: worker1   ### Used to select the worker node based on the label to launch the Pod
+  #nodeName: r2ru2  ### Used to select the worker node based on the name to launch the Pod
