@@ -1,35 +1,30 @@
 ---
 user_command_volumes:
-    - /opt/software/appformix:/opt/software/appformix
+- /opt/software/appformix:/opt/software/appformix
+- /opt/software/xflow:/opt/software/xflow
 command_servers:
     server1:
-        ip: 10.200.61.7
+        ip: <server1_ip>
         connection: ssh
         ssh_user: root
-        ssh_pass: training1!
-        sudo_pass: training1!
-        ntpserver: 10.200.61.254
-        # Specify either container_path
-        #container_path: /root/contrail-command-051618.tar
-        # or registry details and container_name
-        registry_insecure: true
-        #container_registry: 10.84.5.81:5010
+        ssh_pass: <ssh_password>
+        sudo_pass: <ssh_password>
+        ntpserver: <ntp_ip>
+        registry_insecure: false
         container_registry: hub.juniper.net/contrail
-        container_name: contrail-command
-        #container_tag: 5.0-214
-        container_tag: 1908.47
         container_registry_username: <username>
         container_registry_password: <password>
+        container_name: contrail-command
+        container_tag: 2008.121
         config_dir: /etc/contrail
 
         # contrail command container configurations given here go to /etc/contrail/contrail.yml
         contrail_config:
             # Database configuration. MySQL/PostgreSQL supported
             database:
-                user: root
-                password: contrail123
                 type: postgres
                 dialect: postgres
+                password: contrail123
             # Keystone configuration
             keystone:
                 assignment:
@@ -38,6 +33,5 @@ command_servers:
                         admin:
                           password: contrail123
             insecure: true
-            #auth_type: basic-auth
             client:
               password: contrail123
