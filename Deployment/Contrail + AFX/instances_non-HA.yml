@@ -1,0 +1,77 @@
+global_configuration:
+  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  REGISTRY_PRIVATE_INSECURE: false
+  CONTAINER_REGISTRY_USERNAME: <username>
+  CONTAINER_REGISTRY_PASSWORD: <password>
+provider_config:
+  bms:
+    ssh_user: root
+    ssh_pwd: <ssh_password>
+    ntpserver: <ntp_ip>
+instances:
+  aio:
+    ip: <aio_ip>
+    provider: bms
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      analytics_alarm:
+      webui:
+      openstack:
+      openstack_compute:
+      appformix_openstack_controller:
+      appformix_bare_host:
+  appformix:
+    ip: <appformix_server_ip>
+    provider: bms
+    roles:
+      appformix_controller:
+      appformix_bare_host:
+  xflow:
+    ip: <xflow_server_ip>
+    provider: bms
+    roles:
+      appformix_bare_host:
+      appformix_flows:
+contrail_configuration:
+  LOG_LEVEL: SYS_DEBUG
+  METADATA_PROXY_SECRET: c0ntrail123
+  AAA_MODE: rbac
+  KEYSTONE_AUTH_ADMIN_PASSWORD: c0ntrail123
+  KEYSTONE_AUTH_URL_VERSION: "/v3"
+  RABBITMQ_NODE_PORT: 5673
+  CONTRAIL_VERSION: "2008.121"
+  CLOUD_ORCHESTRATOR: openstack
+  RABBITMQ_NODE_PORT: 5673
+  VROUTER_GATEWAY: <GW IP>
+  ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
+  OPENSTACK_VERSION: queens
+  AUTH_MODE: keystone
+  KEYSTONE_AUTH_HOST: <aio_ip>
+  IPFABRIC_SERVICE_HOST: <aio_ip>
+  CONFIG_API_VIP: <aio_ip>
+  KEYSTONE_AUTH_URL_VERSION: /v3
+  CONTROLLER_NODES: <aio_ip>
+  OPENSTACK_NODES: <aio_ip>
+  CONTROL_NODES: <aio_ip>
+  CONTRAIL_CONTAINER_TAG: "2008.121"
+  CONFIG_NODEMGR__DEFAULTS__minimum_diskGB: "2"
+  CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: "2"
+  DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: "2"
+
+kolla_config:
+  kolla_globals:
+    openstack_release: queens
+    enable_haproxy: "no"
+    enable_ironic: "no"
+    enable_swift: "yes"
+    swift_disk_partition_size: 20GB
+  kolla_passwords:
+    keystone_admin_password: c0ntrail123
+appformix_configuration:
+    appformix_license:  /opt/software/appformix/appformix-internal-openstack-3.1.sig
+xflow_configuration:
+    loadbalancer_collector_vip: <lb_vip>
