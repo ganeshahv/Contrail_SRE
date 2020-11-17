@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    type: ubuntu
+  name: ds2-tenant1
+  namespace: tenant1
+spec:
+  selector:
+    matchLabels:
+      type: ubuntu
+  template:
+    metadata:
+      labels:
+        type: ubuntu
+      annotations:
+        opencontrail.org/network: '{"domain":"default-domain", "project":"k8s-tenant1", "name": "k8s-test-vn-1-pod-network" }'
+    spec:
+      containers:
+      - image: ubuntu-upstart
+        name: ubuntu
