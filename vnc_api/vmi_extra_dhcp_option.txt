@@ -1,0 +1,17 @@
+(config-api)[root@r2ru5 /]$ python
+Python 2.7.5 (default, Aug  7 2019, 00:51:29)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-39)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from vnc_api.vnc_api import *
+>>> from vnc_api import vnc_api
+>>> vh=VncApi(username=<username>,password=<password>,tenant_name='admin',api_server_host=<api_server_ip>,api_server_port='8082')
+>>> my_vmi=vh.virtual_machine_interface_read(id='c3306738-28a7-11eb-b332-002590efb4b8')
+>>> obj_1 = vnc_api.DhcpOptionsListType()
+>>> obj_2 = vnc_api.DhcpOptionType()
+>>> obj_2.set_dhcp_option_name('interface-mtu')
+>>> obj_2.set_dhcp_option_value('8999')
+>>> obj_1.add_dhcp_option(obj_2)
+>>> my_vmi.set_virtual_machine_interface_dhcp_option_list(obj_1)
+>>> vh.virtual_machine_interface_update(my_vmi)
+>>> my_vmi.get_virtual_machine_interface_dhcp_option_list()
+dhcp_option = [dhcp_option_name = interface-mtu, dhcp_option_value = 8999, dhcp_option_value_bytes = None]
