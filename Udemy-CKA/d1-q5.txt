@@ -1,0 +1,3 @@
+ kubectl explain pod > pod.txt
+ kubectl explain pod.metadata > pod-manifest.txt
+ kubectl explain pod.spec.tolerations.tolerationSeconds > tolerationSeconds.txt
