@@ -1,0 +1,292 @@
+--- 
+device_to_ztp: 
+  - 
+    hostname: 'Arya'
+    serial_number: JN1264664AFB
+    supplemental_day_0_cfg: “Arya_cfg"
+  - 
+    hostname: 'Zeta'
+    serial_number: JN124EA7DAFB
+    supplemental_day_0_cfg: “Zeta_cfg"
+  - 
+    hostname: '72Q-5'
+    serial_number: DB875
+    supplemental_day_0_cfg: “72Q-5_cfg"
+  - 
+    hostname: '72Q-13'
+    serial_number: DA348
+    supplemental_day_0_cfg: “72Q-13_cfg"
+  - 
+    hostname: 'QFX5120-48Y-46'
+    serial_number: XH3119370148
+    supplemental_day_0_cfg: “QFX5120-48Y-46_cfg"
+  - 
+    hostname: 'QFX5120-48Y-47'
+    serial_number: XH3119370137
+    supplemental_day_0_cfg: “QFX5120-48Y-47_cfg"
+supplemental_day_0_cfg: 
+  - 
+    cfg: |
+        set system services ftp
+        set system services ssh
+        set system services telnet
+        set system services xnm-clear-text
+        set system services netconf ssh
+        set chassis redundancy routing-engine 0 master
+        set chassis redundancy routing-engine 1 backup
+        set system time-zone America/Los_Angeles
+        set system name-server 10.161.30.30
+        set system name-server 10.161.30.18
+        set system name-server 172.29.131.60
+        set system ntp server 66.129.233.81
+        set routing-options static route 10.255.255.0/24 next-hop 10.161.39.254
+        set routing-options static route 10.255.255.0/24 retain
+        set routing-options static route 10.255.255.0/24 no-readvertise
+        set routing-options static route 10.104.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.104.0.0/16 retain
+        set routing-options static route 10.104.0.0/16 no-readvertise
+        set routing-options static route 10.161.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.161.0.0/16 retain
+        set routing-options static route 10.161.0.0/16 no-readvertise
+        set routing-options static route 172.16.0.0/12 next-hop 10.161.39.254
+        set routing-options static route 172.16.0.0/12 retain
+        set routing-options static route 172.16.0.0/12 no-readvertise
+        set routing-options static route 192.168.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 192.168.0.0/16 retain
+        set routing-options static route 192.168.0.0/16 no-readvertise
+        set chassis fpc 0 pic 0 pic-mode 100G
+        set chassis fpc 0 pic 1 pic-mode 100G
+        set chassis fpc 1 pic 0 pic-mode 100G
+        set chassis fpc 1 pic 1 pic-mode 100G
+        set chassis network-services enhanced-ip
+        set interfaces et-0/0/2 unit 0
+        set interfaces et-1/0/2 unit 0
+        set interfaces et-2/0/0 unit 0
+        set interfaces et-2/0/1 unit 0
+        set interfaces et-1/0/5 unit 0
+        set interfaces et-0/1/5 unit 0
+        set interfaces et-0/0/5 unit 0
+        set interfaces et-1/1/5 unit 0
+        set interfaces et-0/1/2 unit 0
+        set interfaces et-1/1/2 unit 0
+    name: “Arya_cfg"
+  - 
+    cfg: |
+        set system services ftp
+        set system services ssh
+        set system services telnet
+        set system services xnm-clear-text
+        set system services netconf ssh
+        set chassis redundancy routing-engine 0 master
+        set chassis redundancy routing-engine 1 backup
+        set system time-zone America/Los_Angeles
+        set system name-server 10.161.30.30
+        set system name-server 10.161.30.18
+        set system name-server 172.29.131.60
+        set system ntp server 66.129.233.81
+        set routing-options static route 10.255.255.0/24 next-hop 10.161.39.254
+        set routing-options static route 10.255.255.0/24 retain
+        set routing-options static route 10.255.255.0/24 no-readvertise
+        set routing-options static route 10.104.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.104.0.0/16 retain
+        set routing-options static route 10.104.0.0/16 no-readvertise
+        set routing-options static route 10.161.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.161.0.0/16 retain
+        set routing-options static route 10.161.0.0/16 no-readvertise
+        set routing-options static route 172.16.0.0/12 next-hop 10.161.39.254
+        set routing-options static route 172.16.0.0/12 retain
+        set routing-options static route 172.16.0.0/12 no-readvertise
+        set routing-options static route 192.168.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 192.168.0.0/16 retain
+        set routing-options static route 192.168.0.0/16 no-readvertise
+        set chassis fpc 0 pic 0 pic-mode 100G
+        set chassis fpc 0 pic 1 pic-mode 100G
+        set chassis fpc 1 pic 0 pic-mode 100G
+        set chassis fpc 1 pic 1 pic-mode 100G
+        set chassis network-services enhanced-ip
+        set interfaces et-0/0/2 unit 0
+        set interfaces et-1/0/2 unit 0
+        set interfaces et-2/0/0 unit 0
+        set interfaces et-2/0/1 unit 0
+        set interfaces et-1/0/5 unit 0
+        set interfaces et-0/1/5 unit 0
+        set interfaces et-0/0/5 unit 0
+        set interfaces et-1/1/5 unit 0
+        set interfaces et-0/1/2 unit 0
+        set interfaces et-1/1/2 unit 0
+    name: “Zeta_cfg"
+  - 
+    cfg: |
+        set system services ftp
+        set system services ssh
+        set system services telnet
+        set system services xnm-clear-text
+        set system services netconf ssh
+        set chassis redundancy routing-engine 0 master
+        set chassis redundancy routing-engine 1 backup
+        set system time-zone America/Los_Angeles
+        set system name-server 10.161.30.30
+        set system name-server 10.161.30.18
+        set system name-server 172.29.131.60
+        set system ntp server 66.129.233.81
+        set routing-options static route 10.255.255.0/24 next-hop 10.161.39.254
+        set routing-options static route 10.255.255.0/24 retain
+        set routing-options static route 10.255.255.0/24 no-readvertise
+        set routing-options static route 10.104.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.104.0.0/16 retain
+        set routing-options static route 10.104.0.0/16 no-readvertise
+        set routing-options static route 10.161.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.161.0.0/16 retain
+        set routing-options static route 10.161.0.0/16 no-readvertise
+        set routing-options static route 172.16.0.0/12 next-hop 10.161.39.254
+        set routing-options static route 172.16.0.0/12 retain
+        set routing-options static route 172.16.0.0/12 no-readvertise
+        set routing-options static route 192.168.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 192.168.0.0/16 retain
+        set routing-options static route 192.168.0.0/16 no-readvertise
+        set chassis fpc 0 pic 0 port 1 speed 100g
+        set chassis fpc 0 pic 0 port 7 speed 100g
+        set chassis fpc 0 pic 0 port 11 speed 100g
+        set chassis fpc 0 pic 0 port 12 channel-speed 10g
+        set chassis fpc 0 pic 0 port 15 channel-speed 10g
+        set chassis fpc 0 pic 0 port 25 speed 100g
+        set chassis fpc 0 pic 0 port 29 speed 100g
+        set chassis fpc 0 pic 0 port 31 speed 100g
+        set chassis fpc 0 pic 0 port 35 speed 100g
+        set interfaces et-0/0/1 unit 0
+        set interfaces et-0/0/31 unit 0
+        set interfaces et-0/0/29 unit 0
+        set interfaces et-0/0/13 unit 0
+        set interfaces et-0/0/17 unit 0
+        set interfaces et-0/0/35 unit 0
+        set interfaces et-0/0/25 unit 0
+        set interfaces et-0/0/11 unit 0
+        set interfaces et-0/0/7 unit 0
+    name: “72Q-5_cfg"
+  - 
+    cfg: |
+        set system services ftp
+        set system services ssh
+        set system services telnet
+        set system services xnm-clear-text
+        set system services netconf ssh
+        set chassis redundancy routing-engine 0 master
+        set chassis redundancy routing-engine 1 backup
+        set system time-zone America/Los_Angeles
+        set system name-server 10.161.30.30
+        set system name-server 10.161.30.18
+        set system name-server 172.29.131.60
+        set system ntp server 66.129.233.81
+        set routing-options static route 10.255.255.0/24 next-hop 10.161.39.254
+        set routing-options static route 10.255.255.0/24 retain
+        set routing-options static route 10.255.255.0/24 no-readvertise
+        set routing-options static route 10.104.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.104.0.0/16 retain
+        set routing-options static route 10.104.0.0/16 no-readvertise
+        set routing-options static route 10.161.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 10.161.0.0/16 retain
+        set routing-options static route 10.161.0.0/16 no-readvertise
+        set routing-options static route 172.16.0.0/12 next-hop 10.161.39.254
+        set routing-options static route 172.16.0.0/12 retain
+        set routing-options static route 172.16.0.0/12 no-readvertise
+        set routing-options static route 192.168.0.0/16 next-hop 10.161.39.254
+        set routing-options static route 192.168.0.0/16 retain
+        set routing-options static route 192.168.0.0/16 no-readvertise
+        set chassis fpc 0 pic 0 port 1 speed 100g
+        set chassis fpc 0 pic 0 port 7 speed 100g
+        set chassis fpc 0 pic 0 port 11 speed 100g
+        set chassis fpc 0 pic 0 port 12 channel-speed 10g
+        set chassis fpc 0 pic 0 port 15 channel-speed 10g
+        set chassis fpc 0 pic 0 port 25 speed 100g
+        set chassis fpc 0 pic 0 port 29 speed 100g
+        set chassis fpc 0 pic 0 port 31 speed 100g
+        set chassis fpc 0 pic 0 port 35 speed 100g
+        set interfaces et-0/0/1 unit 0
+        set interfaces et-0/0/31 unit 0
+        set interfaces et-0/0/29 unit 0
+        set interfaces et-0/0/13 unit 0
+        set interfaces et-0/0/17 unit 0
+        set interfaces et-0/0/35 unit 0
+        set interfaces et-0/0/25 unit 0
+        set interfaces et-0/0/11 unit 0
+        set interfaces et-0/0/7 unit 0
+    name: “72Q-13_cfg"
+  - 
+    cfg: |
+        set groups global system services ftp
+        set groups global system services ssh
+        set groups global system services telnet
+        set groups global system services xnm-clear-text
+        set groups global system services netconf ssh
+        set groups global system host-name QFX5120-48Y-46
+        set groups global system domain-name jnpr.net
+        set groups global system backup-router 10.161.39.254
+        set groups global system backup-router destination 0.0.0.0/0
+        set groups global system time-zone America/Los_Angeles
+        set groups global system authentication-order password
+        set groups global system name-server 10.161.30.30
+        set groups global system name-server 10.161.30.18
+        set groups global system name-server 172.29.131.60
+        set groups global system syslog file messages any any
+        set groups global system syslog file messages interactive-commands none
+        set groups global system syslog file messages archive size 10m
+        set groups global system syslog file messages archive files 10
+        set groups global system ntp server 66.129.233.81
+        set groups global interfaces em0 unit 0 family inet address 10.161.36.28/21
+        set groups global routing-options static route 10.255.255.0/24 next-hop 10.161.39.254
+        set groups global routing-options static route 10.255.255.0/24 retain
+        set groups global routing-options static route 10.255.255.0/24 no-readvertise
+        set groups global routing-options static route 10.104.0.0/16 next-hop 10.161.39.254
+        set groups global routing-options static route 10.104.0.0/16 retain
+        set groups global routing-options static route 10.104.0.0/16 no-readvertise
+        set groups global routing-options static route 10.161.0.0/16 next-hop 10.161.39.254
+        set groups global routing-options static route 10.161.0.0/16 retain
+        set groups global routing-options static route 10.161.0.0/16 no-readvertise
+        set groups global routing-options static route 172.16.0.0/12 next-hop 10.161.39.254
+        set groups global routing-options static route 172.16.0.0/12 retain
+        set groups global routing-options static route 172.16.0.0/12 no-readvertise
+        set groups global routing-options static route 192.168.0.0/16 next-hop 10.161.39.254
+        set groups global routing-options static route 192.168.0.0/16 retain
+        set groups global routing-options static route 192.168.0.0/16 no-readvertise
+        set apply-groups global
+    name: “QFX5120-48Y-46_cfg"
+  - 
+    cfg: |
+        set groups global system services ftp
+        set groups global system services ssh
+        set groups global system services telnet
+        set groups global system services xnm-clear-text
+        set groups global system services netconf ssh
+        set groups global system host-name QFX5120-48Y-47
+        set groups global system domain-name jnpr.net
+        set groups global system backup-router 10.161.39.254
+        set groups global system backup-router destination 0.0.0.0/0
+        set groups global system time-zone America/Los_Angeles
+        set groups global system authentication-order password
+        set groups global system name-server 10.161.30.30
+        set groups global system name-server 10.161.30.18
+        set groups global system name-server 172.29.131.60
+        set groups global system syslog file messages any any
+        set groups global system syslog file messages interactive-commands none
+        set groups global system syslog file messages archive size 10m
+        set groups global system syslog file messages archive files 10
+        set groups global system ntp server 66.129.233.81
+        set groups global interfaces em0 unit 0 family inet address 10.161.36.29/21
+        set groups global routing-options static route 10.255.255.0/24 next-hop 10.161.39.254
+        set groups global routing-options static route 10.255.255.0/24 retain
+        set groups global routing-options static route 10.255.255.0/24 no-readvertise
+        set groups global routing-options static route 10.104.0.0/16 next-hop 10.161.39.254
+        set groups global routing-options static route 10.104.0.0/16 retain
+        set groups global routing-options static route 10.104.0.0/16 no-readvertise
+        set groups global routing-options static route 10.161.0.0/16 next-hop 10.161.39.254
+        set groups global routing-options static route 10.161.0.0/16 retain
+        set groups global routing-options static route 10.161.0.0/16 no-readvertise
+        set groups global routing-options static route 172.16.0.0/12 next-hop 10.161.39.254
+        set groups global routing-options static route 172.16.0.0/12 retain
+        set groups global routing-options static route 172.16.0.0/12 no-readvertise
+        set groups global routing-options static route 192.168.0.0/16 next-hop 10.161.39.254
+        set groups global routing-options static route 192.168.0.0/16 retain
+        set groups global routing-options static route 192.168.0.0/16 no-readvertise
+        set apply-groups global
+    name: “QFX5120-48Y-47_cfg"
+
